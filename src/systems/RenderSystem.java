@@ -54,6 +54,7 @@ public class RenderSystem implements ISystem {
         
         g2.setColor(Color.white);
         int score = 0;
+        int highScore = 0;
         int level = 0;
         int lives = 0;
         
@@ -62,6 +63,7 @@ public class RenderSystem implements ISystem {
             level = game.getLevel();
             score = game.getScore();
             lives = game.getLives();
+            highScore = game.getHighScore();
             
             if (game.getStatusMessage() != null) {
                 g2.drawString(game.getStatusMessage(), 200, 280);
@@ -70,8 +72,8 @@ public class RenderSystem implements ISystem {
         }
         
         g2.drawString("Score: " + score, 50, 30);
+        g2.drawString("High Score: " + highScore, 200, 30);
         g2.drawString("Level: " + level, 400, 30);
-//        g2.drawString("Lives: " + lives, 50, 555);
         
         // Render lives images
         ImageIcon iic = new ImageIcon(this.getClass().getResource("/resources/ship.png"));

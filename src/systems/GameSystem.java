@@ -5,6 +5,7 @@
 package systems;
 
 import entitysystem.EntityCreator;
+import entitysystem.EntityRemover;
 import entitysystem.Engine;
 import java.util.ArrayList;
 import systems.ISystem;
@@ -22,6 +23,7 @@ import nodes.*;
 public class GameSystem implements ISystem {
     
     private EntityCreator creator;
+    private EntityRemover remover;
     private Engine engine;
     private ArrayList<GameNode> gameNodeList;
     private ArrayList<UserCollisionNode> userCollisionNodeList;
@@ -29,8 +31,10 @@ public class GameSystem implements ISystem {
     private ArrayList<AsteroidCollisionNode> asteroidCollisionNodeList;
     private JPanel jpanel;
 
-    public GameSystem(EntityCreator creator) {
+    public GameSystem(EntityCreator creator, EntityRemover remover, JPanel jpanel) {
         this.creator = creator;
+        this.remover = remover;
+        this.jpanel = jpanel;
     }
 
     @Override
@@ -41,10 +45,6 @@ public class GameSystem implements ISystem {
         asteroidCollisionNodeList = this.engine.getAsteroidCollisionNodeList(); 
         bulletCollisionNodeList = this.engine.getBulletCollisionNodeList();
         userCollisionNodeList = this.engine.getUserCollisionNodeList();
-    }
-    
-    public void setJPanel(JPanel jpanel) {
-        this.jpanel = jpanel;
     }
 
     @Override
@@ -59,6 +59,7 @@ public class GameSystem implements ISystem {
                 //User is dead
                 game.loseLife();
                 if (game.getLives() > 0) {
+                    
                     // Clear out explosions, bulltes and asteroids
                     clearAllAsteroids();
                     clearAllBullets();
@@ -70,6 +71,7 @@ public class GameSystem implements ISystem {
                 } else {
                     // Game Over
                     game.setStatusMessage("Game Over");
+                    game.setGameIsOver();
                 }
             }
             
@@ -95,16 +97,18 @@ public class GameSystem implements ISystem {
     private void clearAllBullets() {
         if (bulletCollisionNodeList != null) {
             for (int j = 0; j < bulletCollisionNodeList.size(); j++) {
-                creator.destroyEntity( ((BulletCollisionNode)bulletCollisionNodeList.get(j)).entity );
+                remover.markEntityForRemoval(((BulletCollisionNode)bulletCollisionNodeList.get(j)).entity );
             }
+            remover.removeMarkedEntities();
         }
     }
     
     private void clearAllAsteroids() {
         if (asteroidCollisionNodeList != null) {
             for (int i = 0; i < asteroidCollisionNodeList.size(); i++) {
-                creator.destroyEntity( ((AsteroidCollisionNode)asteroidCollisionNodeList.get(i)).entity );
+                remover.markEntityForRemoval(((AsteroidCollisionNode)asteroidCollisionNodeList.get(i)).entity);
             }
+            remover.removeMarkedEntities();
         }
     }
     

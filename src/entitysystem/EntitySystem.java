@@ -17,7 +17,7 @@ public class EntitySystem extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 600);
         setLocationRelativeTo(null);
-        setTitle("Test");
+        setTitle("Apple Attack");
         setResizable(false);
         setVisible(true);
     }

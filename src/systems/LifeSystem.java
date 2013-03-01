@@ -7,6 +7,7 @@ package systems;
 import entitysystem.Engine;
 import entitysystem.Entity;
 import entitysystem.EntityCreator;
+import entitysystem.EntityRemover;
 import java.util.ArrayList;
 import nodes.LifeNode;
 
@@ -16,21 +17,19 @@ import nodes.LifeNode;
  */
 public class LifeSystem implements ISystem {
     
-    private EntityCreator creator;
+    private EntityRemover remover;
     private ArrayList<LifeNode> lifeNodeList;
     private Engine engine;
-    private ArrayList<Entity> entitiesToBeRemoved;
 
-    public LifeSystem(EntityCreator creator) {
-        this.creator = creator;
-        this.entitiesToBeRemoved = new ArrayList<Entity>();
+    public LifeSystem(EntityRemover remover) {
+        this.remover = remover;
     }
 
     @Override
     public void addToEngine(Engine engine) {
         this.engine = engine;
         
-        this.lifeNodeList = engine.getLifeNodeList();
+        lifeNodeList = this.engine.getLifeNodeList();
     }
 
     @Override
@@ -41,16 +40,13 @@ public class LifeSystem implements ISystem {
                 
                 node.life.decreaseLifeByStandardAmount();
                 if ( ! node.life.isAlive() ) {
-                    this.entitiesToBeRemoved.add(node.entity);
+                    remover.markEntityForRemoval(node.entity);
                 }
             
             }
             
             // Remove all entities that need to be removed
-            for (Entity entity : this.entitiesToBeRemoved) {
-                this.creator.destroyEntity(entity);
-            }
-            this.entitiesToBeRemoved.clear();
+            remover.removeMarkedEntities();
         }
     }
     

@@ -24,24 +24,22 @@ public class Space extends JPanel implements ActionListener {
     
     private Engine engine;
     private EntityCreator creator;
+    private EntityRemover remover;
     
     public Space() {
 
         setBackground(Color.black);
         
         // ES Initialization
-        this.engine = new Engine();
-        this.creator = new EntityCreator(engine);
-//        this.creator.createGame(this);
-        GameSystem gm = new GameSystem(this.creator);
-        gm.setJPanel(this);
-        
-        this.engine.addSystem( gm );
-        this.engine.addSystem( new MotionControlSystem(this.creator) );
-        this.engine.addSystem( new MovementSystem(this.creator) );
-        this.engine.addSystem( new CollisionSystem(this.creator) );
-        this.engine.addSystem( new LifeSystem(this.creator) );
-        this.engine.addSystem( new RenderSystem(this.creator) );
+        engine = new Engine();
+        creator = new EntityCreator(engine);
+        remover = new EntityRemover(engine);
+        engine.addSystem( new GameSystem(creator, remover, this) );
+        engine.addSystem( new MotionControlSystem(creator) );
+        engine.addSystem( new MovementSystem(creator) );
+        engine.addSystem( new CollisionSystem(creator, remover) );
+        engine.addSystem( new LifeSystem(remover) );
+        engine.addSystem( new RenderSystem(creator) );
                 
         setFocusable(true);
         

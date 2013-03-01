@@ -91,7 +91,4 @@ public class EntityCreator {
         this.engine.addEntity(asteroid);        
     }
     
-    public void destroyEntity(Entity entity) {
-        this.engine.removeEntity(entity);
-    }
 }

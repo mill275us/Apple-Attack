@@ -7,6 +7,7 @@ package systems;
 import components.Game;
 import entitysystem.Engine;
 import entitysystem.EntityCreator;
+import entitysystem.EntityRemover;
 import java.util.ArrayList;
 import nodes.UserCollisionNode;
 import nodes.AsteroidCollisionNode;
@@ -21,18 +22,17 @@ import components.Position;
  */
 public class CollisionSystem implements ISystem {
     
+    private Engine engine;
     private EntityCreator creator;
+    private EntityRemover remover;
     private ArrayList<GameNode> gameNodeList;
     private ArrayList<UserCollisionNode> userCollisionNodeList;
     private ArrayList<BulletCollisionNode> bulletCollisionNodeList;
     private ArrayList<AsteroidCollisionNode> asteroidCollisionNodeList;
-    private ArrayList<Entity> entitiesToBeRemoved;
-    
-    private Engine engine;
 
-    public CollisionSystem(EntityCreator creator) {
+    public CollisionSystem(EntityCreator creator, EntityRemover remover) {
         this.creator = creator;
-        this.entitiesToBeRemoved = new ArrayList<Entity>();
+        this.remover = remover;
     }
 
     @Override
@@ -43,7 +43,6 @@ public class CollisionSystem implements ISystem {
         asteroidCollisionNodeList = this.engine.getAsteroidCollisionNodeList(); 
         bulletCollisionNodeList = this.engine.getBulletCollisionNodeList();
         userCollisionNodeList = this.engine.getUserCollisionNodeList();
-        
     }
     
     @Override
@@ -80,10 +79,7 @@ public class CollisionSystem implements ISystem {
 
 
             // Remove all entities that need to be removed
-            for (Entity entity : entitiesToBeRemoved) {
-                creator.destroyEntity(entity);
-            }
-            entitiesToBeRemoved.clear();
+            remover.removeMarkedEntities();
         }
 
     }   // End of update method
@@ -95,8 +91,8 @@ public class CollisionSystem implements ISystem {
         int y2 = ((Position)entity2.get("components.Position")).getY();   
 
         if ( Math.abs(x2 - x) < 10 && Math.abs(y2 - y) < 10) {
-            entitiesToBeRemoved.add(entity1);
-            entitiesToBeRemoved.add(entity2);
+            remover.markEntityForRemoval(entity1);
+            remover.markEntityForRemoval(entity2);
             creator.createExplosion(x2, y2);
             return true;
         }
