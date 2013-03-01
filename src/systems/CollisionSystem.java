@@ -88,7 +88,7 @@ public class CollisionSystem implements ISystem {
 
     }   // End of update method
     
-    public boolean checkForCollision(Entity entity1, Entity entity2) {
+    private boolean checkForCollision(Entity entity1, Entity entity2) {
         int x = ((Position)entity1.get("components.Position")).getX();
         int y = ((Position)entity1.get("components.Position")).getY();      
         int x2 = ((Position)entity2.get("components.Position")).getX();
